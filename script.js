@@ -4,6 +4,7 @@ let counter = 0;
 let moves = 0;
 let firstCard = null;
 let secondCard = null;
+let flippedCard = 0;
 
 function onLoadGame() {
   quantityCards = Number(
@@ -91,17 +92,17 @@ function selectCard(selectedCards) {
     secondCard = selectedCards;
 
     if (firstCard.innerHTML === secondCard.innerHTML) {
-      selectedCards += 2;
+      flippedCard += 2;
       cardReset();
       setTimeout(gameEnd, 1000);
     } else {
-      setTimeout(unclickCard, 1000);
+      setTimeout(unselectCard, 1000);
     }
   }
   selectedCards.classList.add("selected");
 }
 
-function unclickCard() {
+function unselectCard() {
   firstCard.classList.remove("selected");
   secondCard.classList.remove("selected");
   cardReset();
@@ -120,28 +121,33 @@ function restartGame() {
   document.querySelector(".moves span").innerHTML = moves;
 
   quantityCards = 0;
-  selectedCards = 0;
+  flippedCard = 0;
   cardReset();
+}
+function playAgain() {
+  const res = prompt("Deseja jogar novamente? (sim ou não) ");
+  if (res == "sim") {
+    restartGame();
+    onLoadGame()
+  } else if( res == "não") {
+    document.querySelector(".game").innerHTML = `
+      <p>Muito obrigada por jogar! Espero que tenha gostado!</p>
+      `;
+  } else {
+    alert('Digite uma opção válida!')
+    playAgain()
+  }
 }
 
 function gameEnd() {
-  selectedCards = 0;
-  if (selectedCards === quantityCards) {
+
+  if (flippedCard === quantityCards) {
     document.querySelector("ul").innerHTML = "";
     alert(
-      `Parabéns! Você ganhou o jogo em ${counter} segundos e com ${moves} jogadas.`
+      `Parabéns! Você ganhou em ${counter} segundos e com ${moves} jogadas.`
     );
     clearInterval(counterId);
-    const playAgain = confirm("Deseja jogar novamente?");
-    if (playAgain) {
-      restartGame();
-      onLoadGame();
-    } else {
-      restartGame();
-      document.querySelector(".game").innerHTML = `
-      <p>Muito obrigada por jogar! Espero que tenha gostado!</p>
-      `;
-    }
+    playAgain();
   }
 }
 onLoadGame();
