@@ -23,14 +23,14 @@ function onLoadGame() {
 
 function generateCards(cards) {
     const game = document.querySelector(".game");
-  for (let i = 0; i <= cards.length - 1 ; i++) {
+  for (let i = 0; i < cards.length ; i++) {
 
-    const card = `<li class="card" data-identifier="card" onclick="turnCard(this), gameMoves();">
+    const card = `<li class="card" data-identifier="card" onclick="selectCard(this), gameMoves();">
         <div class='front-face face'>
             <img src='assets/front.png'>
         </div>
             <div class='back-face data-identifier="back-face" face'>
-            <img src='assets/${typesOfCards[i]}.gif'>
+            <img src='assets/${cards[i]}.gif'>
             </div>
         </li>`;
     game.innerHTML += card;
@@ -38,7 +38,8 @@ function generateCards(cards) {
 }
 
 function distributeCards(cards, typesOfCards) {
-    for (let i = 0; i < quantityCards; i++) {
+    for (let i = 0; i < (quantityCards / 2); i++) {
+      cards.push(typesOfCards[i]);
       cards.push(typesOfCards[i]);
     }
     cards.sort(comparator);
@@ -76,8 +77,8 @@ function comparator() {
   return Math.random() - 0.5;
 }
 
-function turnCard(clickedCards) {
-  if (clickedCards.classList.contains("clicked")) {
+function selectCard(selectedCards) {
+  if (selectedCards.classList.contains("selected")) {
     return;
   }
   if (secondCard !== null) {
@@ -85,24 +86,24 @@ function turnCard(clickedCards) {
   }
   moves++;
   if (firstCard === null) {
-    firstCard = clickedCards;
+    firstCard = selectedCards;
   } else {
-    secondCard = clickedCards;
+    secondCard = selectedCards;
 
     if (firstCard.innerHTML === secondCard.innerHTML) {
-      clickedCards += 2;
+      selectedCards += 2;
       cardReset();
       setTimeout(gameEnd, 1000);
     } else {
       setTimeout(unclickCard, 1000);
     }
   }
-  clickedCards.classList.add("clicked");
+  selectedCards.classList.add("selected");
 }
 
 function unclickCard() {
-  firstCard.classList.remove("clicked");
-  secondCard.classList.remove("clicked");
+  firstCard.classList.remove("selected");
+  secondCard.classList.remove("selected");
   cardReset();
 }
 
@@ -119,13 +120,13 @@ function restartGame() {
   document.querySelector(".moves span").innerHTML = moves;
 
   quantityCards = 0;
-  clickedCards = 0;
+  selectedCards = 0;
   cardReset();
 }
 
 function gameEnd() {
-    clickedCards = 0;
-  if (clickedCards === quantityCards) {
+  selectedCards = 0;
+  if (selectedCards === quantityCards) {
     document.querySelector("ul").innerHTML = "";
     alert(
       `Parabéns! Você ganhou o jogo em ${counter} segundos e com ${moves} jogadas.`
